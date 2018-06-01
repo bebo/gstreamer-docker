@@ -31,6 +31,8 @@ make -j2
 
 checkinstall -D -y --install=no make install
 
+cd ..
+
 ## good 
 rm gst-plugins-good-1.14.1.tar.xz
 wget https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.14.1.tar.xz
@@ -45,6 +47,8 @@ make -j2
 
 checkinstall -D -y --install=no make install
 
+cd ..
+
 ## bad 
 rm gst-plugins-bad-1.14.1.tar.xz
 wget https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.14.1.tar.xz
@@ -58,6 +62,8 @@ cd gst-plugins-bad-1.14.1
 make -j2
 
 checkinstall -D -y --install=no make install
+
+cd ..
 
 ## av 
 rm gst-libav-1.14.1.tar.xz
