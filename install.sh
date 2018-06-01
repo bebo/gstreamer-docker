@@ -1,5 +1,7 @@
 LD_LIBRARY_PATH=/usr/local/lib
 
+set -e
+
 
 ### gstreamer
 rm gstreamer-1.14.1.tar.xz
