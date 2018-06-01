@@ -38,7 +38,7 @@ rm gst-plugins-good-1.14.1.tar.xz
 wget https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.14.1.tar.xz
 
 rm -rf gst-plugins-good-1.14.1
-tar xvf gst-plugins-good-1.141.1
+tar xvf gst-plugins-good-1.14.1
 
 cd gst-plugins-good-1.14.1
 
@@ -54,7 +54,7 @@ rm gst-plugins-bad-1.14.1.tar.xz
 wget https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.14.1.tar.xz
 
 rm -rf gst-plugins-bad-1.14.1
-tar xvf gst-plugins-bad-1.141.1
+tar xvf gst-plugins-bad-1.14.1
 
 cd gst-plugins-bad-1.14.1
 
@@ -70,7 +70,7 @@ rm gst-libav-1.14.1.tar.xz
 wget https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.1.tar.xz
 
 rm -rf gst-libav-1.14.1
-tar xvf gst-libav-1.141.1
+tar xvf gst-libav-1.14.1
 
 cd gst-libav-1.14.1
 
