@@ -42,6 +42,15 @@ make -j2
 checkinstall -D -y --install=no make install
 cd ..
 
+## ugly 
+wget https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.14.1.tar.xz
+tar xvf gst-plugins-ugly-1.14.1.tar.xz
+cd gst-plugins-ugly-1.14.1
+./autogen.sh --enable-introspection
+make -j2
+checkinstall -D -y --install=no make install
+cd ..
+
 ## av 
 wget https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.1.tar.xz
 tar xvf gst-libav-1.14.1.tar.xz
