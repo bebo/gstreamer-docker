@@ -1,6 +1,7 @@
 LD_LIBRARY_PATH=/usr/local/lib
 
 set -e
+set -x
 
 ### gstreamer
 wget https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.14.1.tar.xz
