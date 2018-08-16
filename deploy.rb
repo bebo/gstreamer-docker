@@ -1,11 +1,12 @@
-#!ruby -w
+#!/usr/bin/env ruby
 # vim: set sw=4 ts=4 et :
 
 require 'optparse'
 require 'open3'
 include Open3
 
-JENKINS_URL = "https://jenkins-stretch.bebo-dev.com/job/gstreamer/"
+JENKINS_URL = "https://jenkins-stretch.bebo-dev.com/job/gstreamer"
+JENKINS_TOKEN = 'uBC3kFJF'
 
 def bump_version(t)
     elems = t.split(".").map{|x| x.to_i}
@@ -76,7 +77,7 @@ unless options[:dirty]
     require_clean_work_tree
 end
 
-test_response=%x(curl --write-out %{http_code} -so /dev/null #{JENKINS_URL})
+test_response=%x(curl -L --write-out %{http_code} -so /dev/null #{JENKINS_URL})
 # check for 200, if not, then exit
 unless test_response == '200'
 #if test_response != '200' || test_response != '201'
@@ -89,7 +90,7 @@ new_tag = ''
 unless options[:tag]
     time = Time.new
     current_branch=%x(git rev-parse --abbrev-ref HEAD).chomp
-    new_tag = current_branch + "-" + time.strftime("%Y%m%d%H%M%S")
+    new_tag = current_branch + "-" + time.strftime("%Y%m%d%H%M%s")
 #    if tag_result != '0' || tag_push_result != '0'
 #        puts "tagging failed, try again later: #{tag_result}"
 #    end
@@ -105,7 +106,7 @@ unless options[:dryrun]
 end
 
 # trigger new build
-jenkins_build_url="#{JENKINS_URL}/buildWithParameters?token=uBC3kFJF&ENV=#{options[:environment]}&TAG=#{new_tag}&DEPLOY=#{options[:deploy]}"
+jenkins_build_url="#{JENKINS_URL}/buildWithParameters?token=#{JENKINS_TOKEN}&ENV=#{options[:environment]}&TAG=#{new_tag}&DEPLOY=#{options[:deploy]}"
 
 # append hosts parameter to jenkins url if we set it option
 if options[:hosts]
@@ -114,7 +115,7 @@ end
 
 puts "jenkins url: #{jenkins_build_url}" if options[:verbose]
 unless options[:dryrun]
-    build_response=%x(curl -s --write-out %{http_code} '#{jenkins_build_url}')
+    build_response=%x(curl -sL --write-out %{http_code} '#{jenkins_build_url}')
     if build_response == '200' || build_response == '201'
         puts "building #{new_tag}"
     else
