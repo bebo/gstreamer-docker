@@ -5,8 +5,9 @@ require 'optparse'
 require 'open3'
 include Open3
 
-JENKINS_URL = "https://jenkins-stretch.bebo-dev.com/job/gstreamer"
-JENKINS_TOKEN = 'uBC3kFJF'
+JENKINS_URL = "https://jenkins-stretch.bebo-dev.com/job/docker-public"
+JENKINS_TOKEN = 'sHMErmAgeAdspOUsiE'
+PROJECT_NAME = 'gstreamer'
 
 def bump_version(t)
     elems = t.split(".").map{|x| x.to_i}
@@ -106,7 +107,7 @@ unless options[:dryrun]
 end
 
 # trigger new build
-jenkins_build_url="#{JENKINS_URL}/buildWithParameters?token=#{JENKINS_TOKEN}&ENV=#{options[:environment]}&TAG=#{new_tag}&DEPLOY=#{options[:deploy]}"
+jenkins_build_url="#{JENKINS_URL}/buildWithParameters?token=#{JENKINS_TOKEN}&ENV=#{options[:environment]}&TAG=#{new_tag}&DEPLOY=#{options[:deploy]}&PROJECT_NAME=#{PROJECT_NAME}"
 
 # append hosts parameter to jenkins url if we set it option
 if options[:hosts]
