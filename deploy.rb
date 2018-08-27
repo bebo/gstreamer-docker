@@ -34,21 +34,11 @@ def require_clean_work_tree
     end
 end
 
-
-#ARGV << '-h' if ARGV.empty?
-
-# env, tag, deploy, hosts
 # get options
 options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: deploy.rb [options]"
 
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
-    options[:verbose] = v
-  end
-  opts.on("-a", "--allow-dirty", "allow dirty git repo") do |d|
-    options[:dirty] = d
-  end
   opts.on("-n", "--[no-]dry-run", "Dry run") do |n|
       options[:dryrun] = n
   end
@@ -59,12 +49,9 @@ OptionParser.new do |opts|
   opts.on("-t", "--tag TAG", "tag to deploy") do |t|
       options[:tag] = t
   end
-  options[:deploy] = true
-  opts.on("-d", "--[no-]deploy", "deploy to hosts") do |d|
-      options[:deploy] = d
-  end
-  opts.on("-H", "--hosts HOSTS", "hosts to deploy to, comma seperated list, eg dev01,dev02 ") do |h|
-      options[:hosts] = h
+  options[:live] = false
+  opts.on("-l", "--live", "live deploy to hosts") do
+      options[:live] = true
   end
   opts.on_tail("-h", "--help", "Show this message") do
     puts opts
@@ -74,14 +61,13 @@ OptionParser.new do |opts|
 end.parse!
 
 # make sure there are no uncommited changes before we tag
-unless options[:dirty]
+unless options[:dirty] or options[:dryrun]
     require_clean_work_tree
 end
 
 test_response=%x(curl -L --write-out %{http_code} -so /dev/null #{JENKINS_URL})
 # check for 200, if not, then exit
 unless test_response == '200'
-#if test_response != '200' || test_response != '201'
     puts "cannot contact jenkins, did you forget to connect to the VPN? #{test_response}"
     exit(1)
 end
@@ -92,29 +78,21 @@ unless options[:tag]
     time = Time.new
     current_branch=%x(git rev-parse --abbrev-ref HEAD).chomp
     new_tag = current_branch + "-" + time.strftime("%Y%m%d%H%M%s")
-#    if tag_result != '0' || tag_push_result != '0'
-#        puts "tagging failed, try again later: #{tag_result}"
-#    end
 else
     new_tag = options[:tag]
 end
 
-puts "current branch: #{current_branch}" if options[:verbose]
-puts "new tag: #{new_tag}" if options[:verbose]
-unless options[:dryrun]
+if options[:dryrun]
+    puts "Would have tagged #{new_tag} but dry-run is activated"
+else
     system("git tag #{new_tag}") or raise "Cannot set tag: #{new_tag}"
     system("git push --tags") or raise "Cannot push tags, something went wrong"
 end
 
 # trigger new build
-jenkins_build_url="#{JENKINS_URL}/buildWithParameters?token=#{JENKINS_TOKEN}&ENV=#{options[:environment]}&TAG=#{new_tag}&DEPLOY=#{options[:deploy]}&PROJECT_NAME=#{PROJECT_NAME}"
+jenkins_build_url="#{JENKINS_URL}/buildWithParameters?token=#{JENKINS_TOKEN}&ENV=#{options[:environment]}&TAG=#{new_tag}&LIVE=#{options[:live]}&PROJECT_NAME=#{PROJECT_NAME}"
 
-# append hosts parameter to jenkins url if we set it option
-if options[:hosts]
-    jenkins_build_url += "&HOSTS=#{options[:hosts]}"
-end
-
-puts "jenkins url: #{jenkins_build_url}" if options[:verbose]
+puts "jenkins url: #{jenkins_build_url}"
 unless options[:dryrun]
     build_response=%x(curl -sL --write-out %{http_code} '#{jenkins_build_url}')
     if build_response == '200' || build_response == '201'
