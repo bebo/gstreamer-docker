@@ -16,6 +16,8 @@ RUN apt update && apt -y install \
     python3-venv \
     yasm \
     curl \
+    libsoup2.4-1 \
+    libsoup2.4-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /bebo/gstreamer
