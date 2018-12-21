@@ -15,6 +15,7 @@ RUN apt update && apt -y install \
     openssh-client \
     python3-venv \
     yasm \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /bebo/gstreamer
