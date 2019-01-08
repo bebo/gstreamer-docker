@@ -7,7 +7,7 @@ include Open3
 
 JENKINS_URL = "https://jenkins-stretch.bebo-dev.com/job/docker-public"
 JENKINS_TOKEN = 'sHMErmAgeAdspOUsiE'
-PROJECT_NAME = 'gstreamer'
+PROJECT_NAME = 'gstreamer-docker'
 
 def bump_version(t)
     elems = t.split(".").map{|x| x.to_i}
