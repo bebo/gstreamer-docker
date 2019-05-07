@@ -30,7 +30,8 @@ RUN pip3 install meson
 
 WORKDIR /bebo/gstreamer
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu"
+ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
+ENV GI_TYPELIB_PATH=/usr/lib/x86_64-linux-gnu/girepository-1.0:${GI_TYPELIB_PATH}
 
 COPY . .
 RUN sh install.sh
