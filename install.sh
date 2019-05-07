@@ -1,61 +1,36 @@
-LD_LIBRARY_PATH=/usr/local/lib
+#!/bin/bash
 
-set -e
-set -x
+GST_VERSION=1.16
 
-### gstreamer
-wget https://gstreamer.freedesktop.org/src/gstreamer/gstreamer-1.14.4.tar.xz
-tar xvf gstreamer-1.14.4.tar.xz
+git clone https://github.com/gstreamer/gst-build.git#7fb7739337eb1cb05a925b268c1381423654068e
 
-cd gstreamer-1.14.4
+meson build/ \
+  -Dgst-plugins-base:gl=enabled \
+  -Dgst-plugins-bad:nvdec=enabled \
+  -Dpython=enabled \
+  -Dgi=enabled \
+  -Dpygobject=enabled \
+  -Dpygobject:pycairo=false
 
-./autogen.sh --enable-introspection --disable-failing-tests --disable-gtk-doc
-make -j4
+./checkout-branch-worktree ./gst-build-branch $GST_VERSION -C build/
 
-make install
+cd ./gst-build-branch
 
-cd ..
+meson build/ \
+  -Dgst-plugins-base:gl=enabled \
+  -Dgst-plugins-bad:nvdec=enabled \
+  -Dpython=enabled \
+  -Dgi=enabled \
+  -Dpygobject=enabled \
+  -Dpygobject:pycairo=false
 
-## base
-wget https://gstreamer.freedesktop.org/src/gst-plugins-base/gst-plugins-base-1.14.4.tar.xz
-tar xvf gst-plugins-base-1.14.4.tar.xz
-cd gst-plugins-base-1.14.4
-./autogen.sh --enable-introspection --disable-failing-tests --disable-gtk-doc
-make -j4
-make install
-cd ..
+ninja -C build install
 
-## good 
-wget https://gstreamer.freedesktop.org/src/gst-plugins-good/gst-plugins-good-1.14.4.tar.xz
-tar xvf gst-plugins-good-1.14.4.tar.xz
-cd gst-plugins-good-1.14.4
-./autogen.sh --enable-introspection --disable-failing-tests --disable-gtk-doc
-make -j4
-make install
-cd ..
+# Required
+# Xvfb :20 -screen 0 1280x720x24+32 &
+# export DISPLAY=:20
 
-## bad 
-wget https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-1.14.4.tar.xz
-tar xvf gst-plugins-bad-1.14.4.tar.xz
-cd gst-plugins-bad-1.14.4
-./autogen.sh --enable-introspection --disable-failing-tests --disable-gtk-doc
-make -j4
-make install
-cd ..
 
-## ugly 
-wget https://gstreamer.freedesktop.org/src/gst-plugins-ugly/gst-plugins-ugly-1.14.4.tar.xz
-tar xvf gst-plugins-ugly-1.14.4.tar.xz
-cd gst-plugins-ugly-1.14.4
-./autogen.sh --enable-introspection --disable-failing-tests --disable-gtk-doc
-make -j4
-make install
-cd ..
+# To test:
+# gst-launch-1.0 videotestsrc is-live=true ! video/x-raw,width=1280,height=720,framerate=1/30 ! x264enc ! h264parse ! nvdec ! fakesink
 
-## av 
-wget https://gstreamer.freedesktop.org/src/gst-libav/gst-libav-1.14.4.tar.xz
-tar xvf gst-libav-1.14.4.tar.xz
-cd gst-libav-1.14.4
-./autogen.sh --enable-introspection --disable-failing-tests --disable-gtk-doc
-make -j4
-make install
