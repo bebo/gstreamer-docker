@@ -26,11 +26,12 @@ RUN apt update && apt -y install \
       xvfb \
       && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /bebo/gstreamer
-
 RUN pip3 install meson
+
+WORKDIR /bebo/gstreamer
 
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu"
 
+COPY . .
 RUN sh install.sh
 
