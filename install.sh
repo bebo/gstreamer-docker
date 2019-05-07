@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 GST_VERSION=1.16
 

@@ -32,3 +32,5 @@ RUN pip3 install meson
 
 ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu"
 
+RUN sh install.sh
+
