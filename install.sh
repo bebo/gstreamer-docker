@@ -4,6 +4,8 @@ GST_VERSION=1.16
 
 git clone https://github.com/gstreamer/gst-build.git#7fb7739337eb1cb05a925b268c1381423654068e
 
+cd gst-build
+
 meson build/ \
   -Dgst-plugins-base:gl=enabled \
   -Dgst-plugins-bad:nvdec=enabled \
