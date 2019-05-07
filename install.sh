@@ -1,10 +1,13 @@
 #!/bin/sh
 
 GST_VERSION=1.16
+GST_BUILD_BRANCH=7fb7739337eb1cb05a925b268c1381423654068e
 
-git clone https://github.com/gstreamer/gst-build.git#7fb7739337eb1cb05a925b268c1381423654068e
+git clone https://github.com/gstreamer/gst-build.git
 
 cd gst-build
+
+git checkout $GST_BUILD_BRANCH
 
 meson build/ \
   -Dgst-plugins-base:gl=enabled \
