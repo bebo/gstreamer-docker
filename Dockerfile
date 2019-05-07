@@ -1,6 +1,8 @@
 FROM nvidia/cuda:9.2-devel
 
-RUN apt update && apt -y install \
+WORKDIR /bebo/gstreamer
+
+RUN apt-get update && apt-get -y install \
       bison \
       flex \
       pkg-config \
@@ -28,10 +30,37 @@ RUN apt update && apt -y install \
 
 RUN pip3 install meson
 
-WORKDIR /bebo/gstreamer
+ENV GST_BUILD_BRANCH=7fb7739337eb1cb05a925b268c1381423654068e
 
-ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu"
+RUN git clone https://github.com/gstreamer/gst-build.git && \
+    cd gst-build && \
+    git checkout $GST_BUILD_BRANCH
 
-COPY . .
-RUN sh install.sh
+ENV GST_VERSION=1.16
 
+RUN cd ./gst-build && \
+    meson build/ \
+        -Dgst-plugins-base:gl=enabled \
+        -Dgst-plugins-bad:nvdec=enabled \
+        -Dpython=enabled \
+        -Dgi=enabled \
+        -Dpygobject=enabled \
+        -Dpygobject:pycairo=false
+
+RUN cd ./gst-build && \
+    ./checkout-branch-worktree ./gst-build-branch $GST_VERSION -C build/
+
+RUN cd ./gst-build/gst-build-branch && \
+    meson build/ \
+      -Dgst-plugins-base:gl=enabled \
+      -Dgst-plugins-bad:nvdec=enabled \
+      -Dpython=enabled \
+      -Dgi=enabled \
+      -Dpygobject=enabled \
+      -Dpygobject:pycairo=false
+
+RUN cd ./gst-build/gst-build-branch && \
+    ninja -C build install
+
+ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
+ENV GI_TYPELIB_PATH=/usr/lib/x86_64-linux-gnu/girepository-1.0
