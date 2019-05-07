@@ -1,31 +1,37 @@
-FROM python:3.7-stretch
+FROM nvidia/cuda:9.2-devel
 
 RUN apt update && apt -y install \
-    autopoint \
-    autotools-dev \
-    bison \
-    build-essential \
-    ffmpeg \
-    flex \
-    git \
-    gtk-doc-tools \
-    libgirepository1.0-dev \
-    librtmp-dev \
-    libx264-dev \
-    openssh-client \
-    python3-venv \
-    yasm \
-    curl \
-    libsoup2.4-1 \
-    libsoup2.4-dev \
-    && rm -rf /var/lib/apt/lists/*
+      bison \
+      flex \
+      pkg-config \
+      autotools-dev \
+      libgirepository1.0-dev \
+      librtmp-dev \
+      libx264-dev \
+      libsoup2.4-1 \
+      libsoup2.4-dev \
+      libpng-dev \
+      libnvidia-gl-390 \
+      libnvidia-decode-390 \
+      libnvidia-encode-390 \
+      libgl1-mesa-dev \
+      libgl1-mesa-glx \
+      curl \
+      build-essential \
+      ninja-build \
+      git \
+      python3.7 \
+      python3-distutils \
+      python3-pip \
+      xvfb \
+      && rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install meson
 
 WORKDIR /bebo/gstreamer
 
+ENV LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/usr/local/lib/x86_64-linux-gnu"
+
 COPY . .
+RUN sh install.sh
 
-RUN sh install.sh && rm -rf ./*/ && rm -rf ./*.tar.xz
-
-ENV LD_LIBRARY_PATH=/usr/local/lib:/usr/local/lib/cuda-9.2:${LD_LIBRARY_PATH}
-ENV GI_TYPELIB_PATH=/usr/local/lib/girepository-1.0:${GI_TYPELIB_PATH}
-ENV GST_PLUGIN_PATH=/usr/local/lib/gstreamer-1.0:${GST_PLUGIN_PATH}
