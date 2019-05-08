@@ -7,6 +7,10 @@ RUN apt-get update && apt-get -y install \
       flex \
       pkg-config \
       autotools-dev \
+      python3.7 \
+      python3.7-dev \
+      python3-distutils \
+      python3-pip \
       libgirepository1.0-dev \
       librtmp-dev \
       libx264-dev \
@@ -22,11 +26,11 @@ RUN apt-get update && apt-get -y install \
       build-essential \
       ninja-build \
       git \
-      python3.7 \
-      python3-distutils \
-      python3-pip \
       xvfb \
       && rm -rf /var/lib/apt/lists/*
+
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.7 9
+RUN update-alternatives --set python3 /usr/bin/python3.7
 
 RUN pip3 install meson
 
@@ -40,11 +44,15 @@ ENV GST_VERSION=1.16
 
 RUN cd ./gst-build && \
     meson build/ \
+        -Dgstreamer:introspection=enabled \
+        -Dgst-plugins-base:introspection=enabled \
         -Dgst-plugins-base:gl=enabled \
         -Dgst-plugins-bad:nvdec=enabled \
         -Dpython=enabled \
         -Dgi=enabled \
+        -Dgst-python:python=/usr/bin/python3.7 \
         -Dpygobject=enabled \
+        -Dpygobject:python=/usr/bin/python3.7 \
         -Dpygobject:pycairo=false
 
 RUN cd ./gst-build && \
@@ -52,15 +60,19 @@ RUN cd ./gst-build && \
 
 RUN cd ./gst-build/gst-build-branch && \
     meson build/ \
-      -Dgst-plugins-base:gl=enabled \
-      -Dgst-plugins-bad:nvdec=enabled \
-      -Dpython=enabled \
-      -Dgi=enabled \
-      -Dpygobject=enabled \
-      -Dpygobject:pycairo=false
+        -Dgstreamer:introspection=enabled \
+        -Dgst-plugins-base:introspection=enabled \
+        -Dgst-plugins-base:gl=enabled \
+        -Dgst-plugins-bad:nvdec=enabled \
+        -Dpython=enabled \
+        -Dgi=enabled \
+        -Dgst-python:python=/usr/bin/python3.7 \
+        -Dpygobject=enabled \
+        -Dpygobject:python=/usr/bin/python3.7 \
+        -Dpygobject:pycairo=false
 
 RUN cd ./gst-build/gst-build-branch && \
-    ninja -C build install
+    ninja -j 16 -C build install
 
 ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
-ENV GI_TYPELIB_PATH=/usr/lib/x86_64-linux-gnu/girepository-1.0
+ENV GI_TYPELIB_PATH=/usr/lib/x86_64-linux-gnu/girepository-1.0:/usr/local/lib/x86_64-linux-gnu/girepository-1.0
