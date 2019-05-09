@@ -1,4 +1,4 @@
-FROM nvidia/cuda:10.0-devel
+FROM nvidia/cuda:9.2-devel-ubuntu18.04
 
 WORKDIR /bebo/gstreamer
 
