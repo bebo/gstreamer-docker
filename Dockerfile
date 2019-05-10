@@ -80,5 +80,6 @@ RUN cd ./gst-build/gst-build-branch && \
 RUN cd ./gst-build/gst-build-branch && \
     ninja -j $BUILD_JOB_COUNT -C build install
 
+ENV NVIDIA_DRIVER_CAPABILITIES=all
 ENV LD_LIBRARY_PATH=/usr/local/lib/x86_64-linux-gnu:${LD_LIBRARY_PATH}
 ENV GI_TYPELIB_PATH=/usr/lib/x86_64-linux-gnu/girepository-1.0:/usr/local/lib/x86_64-linux-gnu/girepository-1.0
