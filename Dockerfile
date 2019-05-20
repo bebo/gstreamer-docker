@@ -44,8 +44,8 @@ RUN git clone https://github.com/GNOME/gobject-introspection.git && \
       meson build -Dpython=/usr/bin/python3.6  && \
       ninja -j $BUILD_JOB_COUNT -C build install
 
-ENV GST_BUILD_BRANCH=7fb7739337eb1cb05a925b268c1381423654068e
-RUN git clone https://github.com/gstreamer/gst-build.git && \
+ENV GST_BUILD_BRANCH=81ee66aa743e1157f8501ba87df13c39d8782e7d
+RUN git clone https://github.com/bebo/gst-build.git && \
     cd gst-build && \
     git checkout $GST_BUILD_BRANCH
 
